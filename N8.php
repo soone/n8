@@ -58,7 +58,7 @@ final class N8
 		}
 		catch(N8_Exception $e)
 		{
-			$e->n8catch();
+			$e->n8catch(__LINE__, __FILE__);
 		}
 
 		return $this;
@@ -72,7 +72,21 @@ final class N8
 	 */
 	public function run()
 	{
-		//解析路由取得control和action
+		try
+		{
+			//路由解析
+			require_once N8_ROOT . './Router/Router.php';
+			$router = new N8_Router_Router($this->config);
+			$router->parse();
+			$control = $router->getControl();
+			$action = $router->getAction();
+			$c = new $control();
+			$c->$action();
+		}
+		catch(N8_Exception $e)
+		{
+			$e->n8catch(__LINE__, __FILE__);
+		}
 	}
 }
 //set_include_path(get_include_path() . PATH_SEPARATOR . dirname(dirname(__FILE__)));
