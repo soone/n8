@@ -47,9 +47,9 @@ final class N8
 	public function init()
 	{
 		if(!RELEASE)
-			define('PROJECT_CONFIG', PROJECT_ROOT . './config');
+			define('PROJECT_CONFIG', PROJECT_ROOT . './Config');
 		else
-			define('PROJECT_CONFIG', PROJECT_ROOT . './cache');
+			define('PROJECT_CONFIG', PROJECT_ROOT . './Cache');
 
 		try
 		{
@@ -78,7 +78,10 @@ final class N8
 			require_once N8_ROOT . './Router/Router.php';
 			$router = new N8_Router_Router($this->config);
 			$router->parse();
-			$control = $router->getControl();
+
+			require_once N8_ROOT . './Core/Control.php';
+			require_once N8_ROOT . './Core/Model.php';
+			$control = $router->getControl($this->config);
 			$action = $router->getAction();
 			$c = new $control();
 			$c->$action();
