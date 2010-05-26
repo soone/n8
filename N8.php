@@ -53,7 +53,7 @@ final class N8
 
 		try
 		{
-			require_once N8_ROOT . './config.php';
+			require_once N8_ROOT . './Config.php';
 			$this->config = new N8_Config();
 		}
 		catch(N8_Exception $e)
