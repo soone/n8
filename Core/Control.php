@@ -2,22 +2,19 @@
 /**
  * N8控制器
  *
- * @author soone fengyue15#163.com
+ * @author soone(fengyue15#163.com)
  */
 class N8_Core_Control
 {
 	public $conf;
-	public $subClass;
-	public $request;
-	public function __construct($conf)
+	public $req;
+	public function __construct($conf, $r = NULL)
 	{
 		$this->conf = $conf;
-		$cClass = get_called_class();
-		$this->subClass = lcfirst(substr($cClass, strrpos($cClass, '_')+1));
 		//权限控制ACL
 		$this->checkAcl();
 		//根据配置信息过滤$_GET, $_POST, $_COOKIE等参数
-		$this->getRequest();
+		$this->getRequest($r);
 		//调用子类里面的初始化方法
 		$this->__init();
 	}
@@ -27,9 +24,46 @@ class N8_Core_Control
 	public function checkAcl()
 	{}
 
-	public function getRequest()
+	/**
+	 * 处理外部请求参数$_GET,$_POST,$_COOKIE 
+	 * 
+	 * @param mixed $r 
+	 * @access public
+	 * @return void
+	 */
+	public function getRequest($r)
 	{
+		if(sizeof($r) == 1 && $r['__N8ENV__'])
+		{
+			$this->req = $r;
+			return;
+		}
+
 		$req = new N8_Request_Request();
-		$this->request['get'] = $req->filterGet($this->conf->get($this->subClass . '->get'));
+		$this->req = $req->filterRequest($this->conf->get($r['__N8ENV__'][0] . '->req'), $r);
+	}
+
+	/**
+	 * 视图渲染调用方法
+	 * 
+	 * @param mixed $tpl 
+	 * @access public
+	 * @return void
+	 */
+	public function render($var = NULL)
+	{
+		if(!is_object($this->view))
+		{
+			//创建视图实例
+			require_once N8_ROOT . './Core/View.php';
+			$cView = new N8_Core_View();
+			$this->view = $cView->createView($this->conf->get('view'));
+		}
+
+		$var ? $this->view->assign($var) : '';
+		if(isset($var['__N8RENDFETCH__']))
+			return $this->view->fetch($this->req['__N8ENV__'][1]);
+		else
+			$this->view->display($this->req['__N8ENV__'][1]);
 	}
 }

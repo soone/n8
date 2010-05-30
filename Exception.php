@@ -13,12 +13,12 @@ class N8_Exception extends Exception
 	 * @access public
 	 * @return void
 	 */
-	public function n8catch($line, $file)
+	public function n8catch()
 	{
-		$msg[] = 'Error File:' . $file;
-		$msg[] = 'Error Line:' . $line;
-		$msg[] = 'Error Message:' . $this->getMessage();
-		$msg[] = 'Error Code:' . $this->getCode();
+		$msg[] = 'Error Line:' . $this->line;
+		$msg[] = 'Error Message:' . $this->message;
+		$msg[] = 'Error Code:' . $this->code;
+		$msg[] = 'Trace:' . $this->getTraceAsString();
 		var_export($msg);
 		exit;
 	}

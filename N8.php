@@ -2,7 +2,7 @@
 /**
  * n8框架初始化程序文件
  *
- * @author soone fengyue15#163.com
+ * @author soone(fengyue15#163.com)
  */
 define('VERSION', 'v0.0.1');
 define('N8_ROOT', dirname(__FILE__) . '/');
@@ -10,7 +10,7 @@ require_once  N8_ROOT . './Exception.php';
 
 final class N8
 {
-	public $config = '';
+	public $conf = '';
 
 	public function __construct()
 	{
@@ -54,11 +54,11 @@ final class N8
 		try
 		{
 			require_once N8_ROOT . './Config.php';
-			$this->config = new N8_Config();
+			$this->conf = new N8_Config();
 		}
 		catch(N8_Exception $e)
 		{
-			$e->n8catch(__LINE__, __FILE__);
+			$e->n8catch();
 		}
 
 		return $this;
@@ -76,19 +76,19 @@ final class N8
 		{
 			//路由解析
 			require_once N8_ROOT . './Router/Router.php';
-			$router = new N8_Router_Router($this->config);
+			$router = new N8_Router_Router($this->conf);
 			$router->parse();
 
 			require_once N8_ROOT . './Core/Control.php';
 			require_once N8_ROOT . './Core/Model.php';
-			$control = $router->getControl($this->config);
+			$control = $router->getControl();
 			$action = $router->getAction();
-			$c = new $control();
+			$c = new $control($this->conf, $router->getRequest());
 			$c->$action();
 		}
 		catch(N8_Exception $e)
 		{
-			$e->n8catch(__LINE__, __FILE__);
+			$e->n8catch();
 		}
 	}
 }

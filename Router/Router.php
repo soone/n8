@@ -1,7 +1,7 @@
 <?php
 /**
  * n8路由器
- * @author soone fengyue15#163.com
+ * @author soone(fengyue15#163.com)
  */
 require_once N8_ROOT . './Router/Exception.php';
 class N8_Router_Router 
@@ -29,6 +29,14 @@ class N8_Router_Router
 	 * @access protected
 	 */
 	protected $a;
+
+	/**
+	 * 路由解析出来的所有请求参数 
+	 * 
+	 * @var mixed
+	 * @access protected
+	 */
+	protected $r;
 
 	const PRO_CON_DIR = 'Control';
 
@@ -90,6 +98,15 @@ class N8_Router_Router
 
 		$this->c = self::PRO_CON_DIR . '_' . $c;
 		$this->a = $a;
+		//根据路由规则返回所有的请求参数，包括get, post, cookie 
+		//todo put delete
+		$this->r = array(
+			'__N8ENV__' => array($c, $a),
+		);
+
+		$_GET ? $this->r['get'] = $_GET : '';
+		$_POST ? $this->r['post'] = $_POST : '';
+		$_COOKIE ? $this->r['COOKIE'] = $_COOKIE : '';
 	}
 
 	/**
@@ -112,5 +129,16 @@ class N8_Router_Router
 	public function getAction()
 	{
 		return $this->a;
+	}
+
+	/**
+	 * 返回request 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function getRequest()
+	{
+		return $this->r;
 	}
 }
