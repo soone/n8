@@ -2,7 +2,7 @@
 /**
  * N8模型
  *
- * @author soone fengyue15#163.com
+ * @author soone(fengyue15#163.com)
  */
 class N8_Core_Model
 {

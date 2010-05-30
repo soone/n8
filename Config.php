@@ -2,7 +2,7 @@
 /**
  * 配置文件处理类
  *
- * @author soone fengyue15#163.com
+ * @author soone(fengyue15#163.com)
  */
 class N8_Config
 {
@@ -29,10 +29,10 @@ class N8_Config
 		//{
 			if(!is_file(PROJECT_CONFIG . '/' . PROJECT_NAME . '_mini.php'))
 			{
-				$cUrl = PROJECT_CONFIG . '/' . PROJECT_NAME . '.php';
-				if(is_file($cUrl))
+				$cFile = PROJECT_CONFIG . '/' . PROJECT_NAME . '.php';
+				if(is_file($cFile))
 				{
-					require_once $cUrl;
+					require_once $cFile;
 					$this->pConfVariable = $pConfig;
 				}
 				else

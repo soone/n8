@@ -19,12 +19,13 @@ class N8_Core_View
 
 	public function createView($conf)
 	{
-		if(!in_array($conf['view'], array('Smarty', 'Discuz')))
+		if(!in_array($conf['type'], array('Smarty', 'Discuz')))
 			throw new N8_View_Exception('Invalid Template Engine', 214);
 
-		include_once N8_ROOT . './View/' . $conf['view'] . 'Apa.php';
-		$v = $conf['view'] . 'Apa';
-		$this->view = new $v($conf);
+		include_once N8_ROOT . './View/' . $conf['type'] . 'Apa.php';
+		$v = 'N8_View_' . $conf['type'] . 'Apa';
+		$this->view = new $v();
+		$this->view->config($conf['conf']);
 		return $this->view;
 	}
 }

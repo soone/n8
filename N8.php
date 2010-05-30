@@ -1,6 +1,6 @@
 <?php
 /**
- * n8框架初始化程序文件
+ * n8初始化程序文件
  *
  * @author soone(fengyue15#163.com)
  */
@@ -49,7 +49,7 @@ final class N8
 		if(!RELEASE)
 			define('PROJECT_CONFIG', PROJECT_ROOT . './Config');
 		else
-			define('PROJECT_CONFIG', PROJECT_ROOT . './Cache');
+			define('PROJECT_CONFIG', PROJECT_ROOT . './Cache/Config');
 
 		try
 		{

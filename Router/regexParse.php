@@ -2,7 +2,7 @@
 /**
  * 正则解析路由器程序文件
  *
- * @author soone<fengyue15 at 163.com>
+ * @author soone(fengyue15 at 163.com)
  */
 class N8_RegexParse extends N8_Router
 {

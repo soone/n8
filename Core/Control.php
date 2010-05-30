@@ -60,10 +60,17 @@ class N8_Core_Control
 			$this->view = $cView->createView($this->conf->get('view'));
 		}
 
-		$var ? $this->view->assign($var) : '';
+		if($var)
+		{
+			$var['tpl'] ? $tpl = $var['tpl'] : '';
+			unset($var['tpl']);
+			$var ? $this->view->assign($var) : '';
+		}
+
+		!$tpl ? $tpl = $this->req['__N8ENV__'][0] . '_' . $this->req['__N8ENV__'][1] . $this->conf->get('view->suffix') : '';
 		if(isset($var['__N8RENDFETCH__']))
-			return $this->view->fetch($this->req['__N8ENV__'][1]);
+			return $this->view->fetch($tpl);
 		else
-			$this->view->display($this->req['__N8ENV__'][1]);
+			$this->view->display($tpl);
 	}
 }

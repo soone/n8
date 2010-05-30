@@ -2,7 +2,7 @@
 /**
  * n8框架中的异常文件
  *
- * @author soone fengyue15#163.com
+ * @author soone(fengyue15#163.com)
  */
 
 class N8_Exception extends Exception
