@@ -27,7 +27,7 @@ final class N8
 	{
 		$splFuncs = count(spl_autoload_functions());
         $classPath = str_replace('_', '/', $cName . '.php');
-        if(file_exists($fullPath = PROJECT_ROOT . $classPath) || file_exists($fullPath = $classPath))
+        if(file_exists($fullPath = PROJECT_ROOT . $classPath) || file_exists($fullPath = N8_ROOT . substr($classPath, 3)))
         {
         	require_once $fullPath;
         }
