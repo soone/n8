@@ -5,7 +5,8 @@
  * @author soone(fengyue15#163.com)
  */
 require_once N8_ROOT . './Dblayer/Exception.php';
-class N8_Dblayer_Dblayer
+require_once N8_ROOT . './Dblayer/Interface.php';
+class N8_Dblayer_Dblayer implements N8_Dblayer_Interface
 {
 	/**
 	 * 预定义的数据源类型 
@@ -36,16 +37,16 @@ class N8_Dblayer_Dblayer
 	/**
 	 * 数据源对象设置 
 	 * 
-	 * @param mixed $dstype 
-	 * @param mixed $dsoption 
+	 * @param mixed $dsType 
+	 * @param mixed $dsConnect 
 	 * @access public
-	 * @return object
+	 * @return void
 	 */
-	public function setDs($dsType, $dsOption = NULL)
+	public function setDs($dsType, $dsConnect = NULL)
 	{
-		$this->dsFlag = md5($dsType . implode('', (array)$dsOption));
-		if(!is_object($this->ds[$this->dsFlag]))
-			$this->factory($dsType, $dsOption);
+		$this->dsFlag = md5($dsType . implode('', (array)$dsConnect));
+		if(!is_object(self::$ds[$this->dsFlag]))
+			$this->factory($dsType, $dsConnect);
 		
 		return $this;
 	}
@@ -54,23 +55,39 @@ class N8_Dblayer_Dblayer
 	 * 创建数据源对象 
 	 * 
 	 * @param mixed $dsType 
-	 * @param mixed $dsOption 
+	 * @param mixed $dsConnect 
 	 * @access public
 	 * @return void
 	 */
-	public function factory($dsType, $dsOption = NULL)
+	public function factory($dsType, $dsConnect = NULL)
 	{
 		if(!in_array($dsType, $this->dsType))
 			throw new N8_Dblayer_Exception('N8 can not support this ds type', 4404);
 
 		include_once N8_ROOT . './Dblayer/' . $dsType . '.php';
 		$dsName = 'N8_Dblayer_' . $dsType;
-		$this->ds[$this->dsFlag] = new $dsName();
-		$dsOption ? $this->setOption($dsOption) : '';
+		self::$ds[$this->dsFlag] = $dsName::getSingle();
+		$dsConnect ? $this->setConnect($dsConnect) : '';
+		return $this;
 	}
 
-	public function setOption($dsOption = NULL)
+	/**
+	 * 设置数据源参数 
+	 * 
+	 * @param mixed $dsConnect 
+	 * @access public
+	 * @return void
+	 */
+	public function setConnect($dsConnect = NULL)
 	{
-		
+		if(!self::$ds[$this->dsFlag['link']])
+			self::$ds[$this->dsFlag]['link'] = self::$ds[$this->dsFlag]->setConnect($dsConnect);
+
+		return $this;
 	}
+
+	public function create(){}
+	public function get(){}
+	public function set(){}
+	public function del(){}
 }
