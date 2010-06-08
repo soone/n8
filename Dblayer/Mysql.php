@@ -71,11 +71,36 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	public $dsUser;
 	public $dsPass;
 
-	public $dsCharset;
+	/**
+	 * 数据源字符类型 
+	 * 
+	 * @var mixed
+	 * @access public
+	 */
+	public $dsCharset = 'utf8';
+
+	public $table;
+
+	public $sql;
+
+	public $where;
+
+	public $set;
+
+	public $errorCode;
+
+	public $errorInfo;
 
 	private function __construct(){}
 
-	public static getSingle()
+	/**
+	 * 单件返回对象 
+	 * 
+	 * @static
+	 * @access public
+	 * @return void
+	 */
+	public static function getSingle()
 	{
 		if(!is_object($this->dsObj))
 			$this->dsObj = new N8_Dblayer_Mysql();
@@ -83,16 +108,88 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 		return $this->dsObj;
 	}
 
+	/**
+	 * 数据库连接 
+	 * 
+	 * @param mixed $dsConnect 
+	 * @access public
+	 * @return void
+	 */
 	public function setConnect($dsConnect = NULL)
 	{
 		$this->dsLinkName = md5(explode('', $dsConnect));
-		if(!$this->dsLink[$linkName])
-			$this->dsLink[$linkName] = new PDO($this->dsType . ':dbname=' . $this->dsDb . ';host=' . $this->dsHost . ';port=' . $this->dsPort, $this->dsUser, $this->dsPass);
+		if(!$this->dsLink[$this->dsLinkName])
+		{
+			$this->dsLink[$this->dsLinkName] = new PDO($this->dsType . ':dbname=' . $this->dsDb . ';host=' . $this->dsHost . ';port=' . $this->dsPort, $this->dsUser, $this->dsPass);
+			$this->dsLink[$this->dsLinkName]->query('SET NAMES ' . $this->dsCharset);
+		}
 
 	}
 
-	public function create(){}
-	public function get(){}
+	/**
+	 * 创建一条数据 
+	 * 
+	 * @param mixed $option 
+	 * @access public
+	 * @return void
+	 */
+	public function create($option)
+	{
+		//$this->sql = $this->setTable($option['table'])->setSet($option['set'])->setWhere($option['where'])->setSql();
+		$this->sql = setSql($option);
+
+		//如果插入多条使用预处理模式
+		if(sizeof($option['value']) > 1)
+		{
+			$sth = $this->dsLink[$this->dsLinkName]->prepare($this->sql);
+			foreach($option['value'] as $v)
+			{
+				$vSize = sizeof($v);
+				for($i = 1; $i <= $vSize; $i++)
+				{
+					$sth->bindParm($i, $v[$i]);
+				}
+
+				$rExec = $sth->execute();
+				if($rExec === true)
+				{
+					$r++;
+				}
+				else
+				{
+					$this->errorCode = $sth->errorCode();
+					break;
+				}
+			}
+		}
+		else
+		{
+			$r = $this->dsLink[$this->dsLinkName]->exec($this->sql);
+			$this->errorCode = $this->dsLink[$this->dsLinkName]->errorCode();
+		}
+
+		if($errCode == '00000')
+			return $r;
+		else
+			return false;
+	}
+
+	public function get($option)
+	{
+		//$this->sql = $this->setTable($option['table'])->setSelect($option['select'])->setWhere($option['where'])->setGroup($option['group'])->setLimit($option['limit'])->setSql();
+		$this->sql = setSql($option);
+
+		$q = $this->dsLink[$this->dsLinkName]->query($this->sql);
+		$errCode = $q->errorCode();
+		if(is_object($q) && $errCode == '00000')
+		{
+			foreach($q as $row)
+			{
+				$r[] = $row;
+			}
+		}
+	}
+
 	public function set(){}
 	public function del(){}
 }
