@@ -34,9 +34,8 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	 * 数据库类型
 	 *
 	 * @var mixed
-	 * @access public
 	 */
-	public const dsType = 'mysql';
+	const dsType = 'mysql';
 
 	/**
 	 * 数据库主机地址 
