@@ -136,7 +136,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	public function create($option)
 	{
 		//$this->sql = $this->setTable($option['table'])->setSet($option['set'])->setWhere($option['where'])->setSql();
-		$this->sql = setSql($option);
+		$this->setSql($option);
 
 		//如果插入多条使用预处理模式
 		if(sizeof($option['value']) > 1)
@@ -168,19 +168,26 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 			$this->errorCode = $this->dsLink[$this->dsLinkName]->errorCode();
 		}
 
-		if($errCode == '00000')
+		if($this->errorCode == '00000')
 			return $r;
 		else
 			return false;
 	}
 
+	/**
+	 * 取得数据结果集 
+	 * 
+	 * @param mixed $option 
+	 * @access public
+	 * @return void
+	 */
 	public function get($option)
 	{
 		//$this->sql = $this->setTable($option['table'])->setSelect($option['select'])->setWhere($option['where'])->setGroup($option['group'])->setLimit($option['limit'])->setSql();
-		$this->sql = setSql($option);
+		$this->setSql($option);
 
 		$q = $this->dsLink[$this->dsLinkName]->query($this->sql);
-		$errCode = $q->errorCode();
+		$this->errorCode = $q->errorCode();
 		if(is_object($q) && $errCode == '00000')
 		{
 			foreach($q as $row)
@@ -188,8 +195,69 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 				$r[] = $row;
 			}
 		}
+
+		if($this->errorCode == '00000')
+			return $r;
+		else
+			return false;
 	}
 
-	public function set(){}
-	public function del(){}
+	/**
+	 * 更新数据 
+	 * 
+	 * @param mixed $option 
+	 * @access public
+	 * @return void
+	 */
+	public function set($option)
+	{
+		$this->setSql($option);
+
+		$sth = $this->dsLink[$this->dsLinkName]->exec($this->sql);
+		$this->errorCode = $this->dsLink[$this->dsLinkName]->errorCode();
+
+		if($this->errorCode == '00000')
+			return $sth;
+		else
+			return false;
+	}
+
+	/**
+	 * 删除数据 
+	 * 
+	 * @param mixed $option 
+	 * @access public
+	 * @return void
+	 */
+	public function del($option)
+	{
+		$this->setSql($option);
+
+		$sth = $this->dsLink[$this->dsLinkName]->exec($this->sql);
+		$this->errorCode = $this->dsLink[$this->dsLinkName]->errorCode();
+
+		if($this->errorCode == '00000')
+			return $sth;
+		else
+			return false;
+	}
+
+	public function setSql($option)
+	{
+		
+	}
+
+	/**
+	 * __destruct 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function __destruct()
+	{
+		foreach($this->dsLink as $link)
+		{
+			unset($link);
+		}
+	}
 }
