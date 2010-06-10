@@ -6,9 +6,9 @@
  */
 interface N8_Dblayer_Interface
 {
-	public function setConnect($dsConnect = NULL)
-	public function create(){}
-	public function get(){}
-	public function set(){}
-	public function del(){}
+	public function setConnect($dsConnect = NULL);
+	public function create($option);
+	public function get($option);
+	public function set($option);
+	public function del($option);
 }

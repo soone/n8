@@ -80,14 +80,34 @@ class N8_Dblayer_Dblayer implements N8_Dblayer_Interface
 	 */
 	public function setConnect($dsConnect = NULL)
 	{
-		if(!self::$ds[$this->dsFlag['link']])
-			self::$ds[$this->dsFlag]['link'] = self::$ds[$this->dsFlag]->setConnect($dsConnect);
+		if(!self::$ds['link'])
+			self::$ds['link'] = self::$ds[$this->dsFlag]->setConnect($dsConnect);
 
 		return $this;
 	}
 
-	public function create(){}
-	public function get(){}
-	public function set(){}
-	public function del(){}
+	public function create($option)
+	{
+		return self::$ds[$this->dsFlag]->create($option);
+	}
+
+	public function get($option)
+	{
+		return self::$ds[$this->dsFlag]->get($option);
+	}
+
+	public function set($option)
+	{
+		return self::$ds[$this->dsFlag]->set($option);
+	}
+
+	public function del($option)
+	{
+		return self::$ds[$this->dsFlag]->del($option);
+	}
+
+	public function setSql($type, $option)
+	{
+		return self::$ds[$this->dsFlag]->setSql($type, $option);
+	}
 }

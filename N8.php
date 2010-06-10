@@ -47,9 +47,20 @@ final class N8
 	public function init()
 	{
 		if(!RELEASE)
+		{
 			define('PROJECT_CONFIG', PROJECT_ROOT . './Config');
+			$disErr = 1;
+			$errLevel = 9;
+		}
 		else
+		{
 			define('PROJECT_CONFIG', PROJECT_ROOT . './Cache/Config');
+			$disErr = 0;
+			$errLevel = 0;
+		}
+
+		ini_set('display_errors', $disErr);
+		ini_set('error_reporting', $errLevel);
 
 		try
 		{
