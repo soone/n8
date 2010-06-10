@@ -241,6 +241,13 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 			return false;
 	}
 
+	/**
+	 * setSql 
+	 * 
+	 * @param mixed $option 
+	 * @access public
+	 * @return void
+	 */
 	public function setSql($option)
 	{
 		
