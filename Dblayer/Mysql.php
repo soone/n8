@@ -178,13 +178,11 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 		$this->setSql(2, $option);
 
 		$q = $this->dsLink[$this->dsLinkName]->query($this->sql);
+		$q->setFetchMode(PDO::FETCH_NUM);
 		$this->errorCode = $q->errorCode();
-		if(is_object($q) && $errCode == '00000')
+		if(is_object($q) && $this->errorCode == '00000')
 		{
-			foreach($q as $row)
-			{
-				$r[] = $row;
-			}
+			$r = $q->fetchAll();
 		}
 
 		if($this->errorCode == '00000')
@@ -404,6 +402,17 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	{
 		$this->sqlLimit = ' LIMIT ' . intval($limit[0]) . ',' . intval($limit[1]);
 		return $this->sqlLimit;
+	}
+
+	/**
+	 * 返回当前sql语句 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function getSql()
+	{
+		return $this->sql;
 	}
 
 	/**
