@@ -73,4 +73,23 @@ class N8_Core_Control
 		else
 			$this->view->display($tpl);
 	}
+
+	/**
+	 * 当方法不存在的时候的处理 
+	 * 
+	 * @param mixed $method 
+	 * @param mixed $args
+	 * @access public
+	 * @return void
+	 */
+	public function __call($method, $args)
+	{
+		//记录日志
+
+		//跳转到错误页面
+		if(defined(PROJECT_404))
+			header('Location:' . PROJECT_404);
+		else
+			header('Location:' . N8_404);
+	}
 }

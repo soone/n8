@@ -90,10 +90,10 @@ class N8_Router_Router
 	{
 		$c = ucfirst(trim($_REQUEST['control']));
 		$a = lcfirst(trim($_REQUEST['action']));
-		if(!$this->c && $defControl = $this->conf->get('router->defControl'))
+		if(!$c && $defControl = $this->conf->get('router->defControl'))
 			$c = ucfirst($defControl);
 
-		if(!$this->a && $defAction = $this->conf->get('router->defAction'))
+		if(!$a && $defAction = $this->conf->get('router->defAction'))
 			$a = lcfirst($defAction);
 
 		$this->c = self::PRO_CON_DIR . '_' . $c;

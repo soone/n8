@@ -50,7 +50,7 @@ final class N8
 		{
 			define('PROJECT_CONFIG', PROJECT_ROOT . './Config');
 			$disErr = 1;
-			$errLevel = 9;
+			$errLevel = 7;
 		}
 		else
 		{
