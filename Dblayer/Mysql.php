@@ -135,7 +135,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 		if(!$this->dsLink[$this->dsLinkName])
 		{
 			$this->dsLink[$this->dsLinkName] = new PDO(self::DSTYPE . ':dbname=' . $this->dsDb . ';host=' . $this->dsHost . ';port=' . $this->dsPort, $this->dsUser, $this->dsPass);
-			$this->dsLink[$this->dsLinkName]->query('SET NAMES ' . $this->dsCharset);
+			$this->dsLink[$this->dsLinkName]->exec('SET NAMES ' . $this->dsCharset);
 		}
 
 	}
@@ -244,6 +244,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	 */
 	public function setSql($type, $option)
 	{
+		unset($this->sql);
 		if($option['table'])
 			$this->table = $option['table'];
 
@@ -265,6 +266,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 
 			case 3://set
 				$this->setSet($option['key'], $option['value']);
+				$this->setWhere($option['where']);
 				$this->sql = 'UPDATE ' . $this->table . $this->sqlSet . $this->sqlWhere;
 				break;
 
@@ -287,6 +289,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	 */
 	public function setSet($key, $value)
 	{
+		unset($this->sqlSet);
 		$kNums = sizeof($key);
 		$set = '';
 		for($i = 0; $i < $kNums; $i++)
@@ -311,6 +314,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	 */
 	public function setKey($key)
 	{
+		unset($this->sqlKey);
 		$this->sqlKey = implode(',', $key);
 		return $this->sqlKey;
 	}
@@ -325,6 +329,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	 */
 	public function setValue($value)
 	{
+		unset($this->sqlValue);
 		foreach($value as $v)
 		{
 			$this->sqlValue .= $spe . '("' . implode('","', explode(',', $v)) . '")';
@@ -348,6 +353,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	 */
 	public function setWhere($where)
 	{
+		unset($this->sqlWhere);
 		$wh = '';
 		if($where['and'])
 		{
@@ -400,6 +406,9 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	 */
 	public function setLimit($limit)
 	{
+		unset($this->sqlLimit);
+		if(!$limit) return;
+
 		$this->sqlLimit = ' LIMIT ' . intval($limit[0]) . ',' . intval($limit[1]);
 		return $this->sqlLimit;
 	}
