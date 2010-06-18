@@ -99,6 +99,8 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 
 	public $errorInfo;
 
+	public $lastInsertId;
+
 	private function __construct(){}
 
 	/**
@@ -158,7 +160,10 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 		$this->errorCode = $this->dsLink[$this->dsLinkName]->errorCode();
 
 		if($this->errorCode == '00000')
+		{
+			$this->lastInsertId = $this->dsLink[$this->dsLinkName]->lastInsertId();
 			return $r;
+		}
 		else
 			return false;
 	}
@@ -178,10 +183,10 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 		$this->setSql(2, $option);
 
 		$q = $this->dsLink[$this->dsLinkName]->query($this->sql);
-		$q->setFetchMode(PDO::FETCH_NUM);
-		$this->errorCode = $q->errorCode();
-		if(is_object($q) && $this->errorCode == '00000')
+		if(is_object($q))
 		{
+			$q->setFetchMode(PDO::FETCH_NUM);
+			$this->errorCode = $q->errorCode();
 			$r = $q->fetchAll();
 		}
 
@@ -235,6 +240,17 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	}
 
 	/**
+	 * 取得最后插入的id 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function getLastInsertId()
+	{
+		return $this->lastInsertId;
+	}
+
+	/**
 	 *  生成sql
 	 * 
 	 * @param mixed $type 
@@ -251,9 +267,13 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 		switch($type)
 		{
 			case 1://create
+				if($option['replace'] == 1)
+					$operate = 'REPLACE';
+				else
+					$operate = 'INSERT';
 				$this->setKey($option['key']);
 				$this->setValue($option['value']);
-				$this->sql = 'INSERT INTO ' . $this->table . '(' . $this->sqlKey . ')VALUES' . $this->sqlValue;
+				$this->sql = $operate . ' INTO ' . $this->table . '(' . $this->sqlKey . ')VALUES' . $this->sqlValue;
 				break;
 
 			case 2://get

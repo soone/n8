@@ -115,4 +115,9 @@ class N8_Dblayer_Dblayer implements N8_Dblayer_Interface
 	{
 		return self::$ds[$this->dsFlag]->getSql();
 	}
+
+	public function getLastInsertId()
+	{
+		return self::$ds[$this->dsFlag]->getLastInsertId();
+	}
 }
