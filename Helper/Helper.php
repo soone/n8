@@ -24,6 +24,7 @@ class N8_Helper_Helper
 		$js .= '</script>';
 
 		echo $js;
+		exit;
 	}
 
 	/**
