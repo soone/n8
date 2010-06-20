@@ -73,6 +73,8 @@ class N8_Helper_Helper
 
 		$page['allNums'] = $options['allNums'];
 		$page['curPage'] = $options['curPage'];
+		$page['prevPage'] = $page['curPage'] > 1 ? $page['curPage'] - 1 : 1;
+		$page['nextPage'] = $page['curPage'] < $page['allPages'] ? $page['curPage'] + 1 : $page['allPages'];
 
 		return $page;
 	}
