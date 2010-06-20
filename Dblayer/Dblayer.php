@@ -120,4 +120,14 @@ class N8_Dblayer_Dblayer implements N8_Dblayer_Interface
 	{
 		return self::$ds[$this->dsFlag]->getLastInsertId();
 	}
+
+	public function getErrno()
+	{
+		return self::$ds[$this->dsFlag]->getErrno();
+	}
+
+	public function getError()
+	{
+		return self::$ds[$this->dsFlag]->getError();
+	}
 }

@@ -158,6 +158,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 
 		$r = $this->dsLink[$this->dsLinkName]->exec($this->sql);
 		$this->errorCode = $this->dsLink[$this->dsLinkName]->errorCode();
+		$this->errorInfo = $this->dsLink[$this->dsLinkName]->errorInfo();
 
 		if($this->errorCode == '00000')
 		{
@@ -187,6 +188,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 		{
 			$q->setFetchMode(PDO::FETCH_NUM);
 			$this->errorCode = $q->errorCode();
+			$this->errorInfo = $q->errorInfo();
 			$r = $q->fetchAll();
 		}
 
@@ -212,6 +214,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 
 		$sth = $this->dsLink[$this->dsLinkName]->exec($this->sql);
 		$this->errorCode = $this->dsLink[$this->dsLinkName]->errorCode();
+		$this->errorInfo = $this->dsLink[$this->dsLinkName]->errorInfo();
 
 		if($this->errorCode == '00000')
 			return $sth;
@@ -232,6 +235,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 
 		$sth = $this->dsLink[$this->dsLinkName]->exec($this->sql);
 		$this->errorCode = $this->dsLink[$this->dsLinkName]->errorCode();
+		$this->errorInfo = $this->dsLink[$this->dsLinkName]->errorInfo();
 
 		if($this->errorCode == '00000')
 			return $sth;
@@ -442,6 +446,28 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	public function getSql()
 	{
 		return $this->sql;
+	}
+
+	/**
+	 * 返回当前错误代码 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function getErrno()
+	{
+		return $this->errorCode;
+	}
+
+	/**
+	 * 返回当前错误信息 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function getError()
+	{
+		return $this->errorInfo;
 	}
 
 	/**
