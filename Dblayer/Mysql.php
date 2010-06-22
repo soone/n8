@@ -325,6 +325,12 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 		if($set)
 			$this->sqlSet = ' SET ' . $set;
 
+		//$part = '/("(.*)\{\{(.*)\}\}(.*)")/i';
+		//if(preg_match($part, $this->sqlValue, $m))
+		//{
+		//	$this->sqlValue = preg_replace($part, $m[2], $this->sqlValue);
+		//}
+
 		return $this->sqlSet;
 	}
 
@@ -358,6 +364,12 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 		{
 			$this->sqlValue .= $spe . '("' . implode('","', explode(',', $v)) . '")';
 			$spe = ',';
+		}
+
+		$part = '/("\{\{(.*)\}\}")/i';
+		if(preg_match($part, $this->sqlValue, $m))
+		{
+			$this->sqlValue = preg_replace($part, $m[2], $this->sqlValue);
 		}
 
 		return $this->sqlValue;
