@@ -23,7 +23,7 @@ final class N8
 	 * @access public
 	 * @return void
 	 */
-	public function __autoload($cName)
+	public static function __autoload($cName)
 	{
 		$splFuncs = count(spl_autoload_functions());
         $classPath = str_replace('_', '/', $cName . '.php');
