@@ -95,6 +95,8 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 
 	public $sqlOrder;
 
+	public $sqlGroup;
+
 	public $errorCode;
 
 	public $errorInfo;
@@ -300,7 +302,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 				break;
 		}
 
-		return $this->sql;
+		return $this->builtInStr($this->sql);
 	}
 
 	/**
@@ -318,18 +320,11 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 		$set = '';
 		for($i = 0; $i < $kNums; $i++)
 		{
-			$set .= $spe . $key[$i] . '="' . $value[$i] . '"';
+			$set .= $spe . $key[$i] . '=\'' . $value[$i] . '\'';
 			$spe = ',';
 		}
 
-		if($set)
-			$this->sqlSet = ' SET ' . $set;
-
-		//$part = '/("(.*)\{\{(.*)\}\}(.*)")/i';
-		//if(preg_match($part, $this->sqlValue, $m))
-		//{
-		//	$this->sqlValue = preg_replace($part, $m[2], $this->sqlValue);
-		//}
+		$this->sqlSet = ' SET ' . $set;
 
 		return $this->sqlSet;
 	}
@@ -362,14 +357,8 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 		unset($this->sqlValue);
 		foreach($value as $v)
 		{
-			$this->sqlValue .= $spe . '("' . implode('","', explode(',', $v)) . '")';
+			$this->sqlValue .= $spe . '(\'' . implode('\',\'', explode(',', $v)) . '\')';
 			$spe = ',';
-		}
-
-		$part = '/("\{\{(.*)\}\}")/i';
-		if(preg_match($part, $this->sqlValue, $m))
-		{
-			$this->sqlValue = preg_replace($part, $m[2], $this->sqlValue);
 		}
 
 		return $this->sqlValue;
@@ -396,12 +385,12 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 			foreach($where['and'] as $k => $w)
 			{
 				if(is_array($w))
-					$wh .= $and . $k . ' IN("' . implode('","', $w) . '")';
+					$wh .= $and . $k . ' IN(\'' . implode('","', $w) . '\')';
 				else
 				{
 					$s = '=';
 					if(substr($w, 0, 1) == '%' || substr($w, -1, 1) == '%') $s = 'like ';
-					$wh .= $and . $k . $s . '"' . $w . '"';
+					$wh .= $and . $k . $s . '\'' . $w . '\'';
 				}
 
 				$and = ' AND ';
@@ -414,12 +403,12 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 			foreach($where['or'] as $k => $w)
 			{
 				if(is_array($w))
-					$wh .= $or . $k . ' IN("' . implode('",', $w) . '")';
+					$wh .= $or . $k . ' IN(\'' . implode('\',', $w) . '\')';
 				else
 				{
 					$s = '=';
 					if(substr($w, 0, 1) == '%' || substr($w, -1, 1) == '%') $s = 'like ';
-					$wh .= $or . $k . $s . '"' . $w . '"';
+					$wh .= $or . $k . $s . '\'' . $w . '\'';
 				}
 
 				$or = ' OR ';
@@ -447,6 +436,21 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 
 		$this->sqlLimit = ' LIMIT ' . intval($limit[0]) . ',' . intval($limit[1]);
 		return $this->sqlLimit;
+	}
+
+	/**
+	 * 设置group格式
+	 * 
+	 * @param mixed $group 
+	 * @access public
+	 * @return void
+	 */
+	public function setGroup($group)
+	{
+		unset($this->sqlGroup);
+		if(!$group) return;
+		
+		$this->sqlGroup = ' GROUP BY ' . $group['by'];
 	}
 
 	/**
@@ -514,6 +518,22 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 
 		if($odby)
 			$this->sqlOrder = ' ORDER BY ' . $odby;
+	}
+
+	/**
+	 * 解析sql里面带{{}}的字符 
+	 * 
+	 * @param mixed $str 
+	 * @access protected
+	 * @return void
+	 */
+	protected function builtInStr($str)
+	{
+		$part = '/(\'\{\{(.*?)\}\}\')/i';
+		if(preg_match_all($part, $str, $m))
+			$str = str_replace($m[1], $m[2], $str);
+
+		return $str;
 	}
 
 	/**
