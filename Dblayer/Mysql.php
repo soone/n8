@@ -302,7 +302,8 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 				break;
 		}
 
-		return $this->builtInStr($this->sql);
+		$this->builtInStr();
+		return $this->sql;
 	}
 
 	/**
@@ -527,13 +528,13 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	 * @access protected
 	 * @return void
 	 */
-	protected function builtInStr($str)
+	protected function builtInStr()
 	{
 		$part = '/(\'\{\{(.*?)\}\}\')/i';
-		if(preg_match_all($part, $str, $m))
-			$str = str_replace($m[1], $m[2], $str);
+		if(preg_match_all($part, $this->sql, $m))
+			$this->sql = str_replace($m[1], $m[2], $this->sql);
 
-		return $str;
+		return $this->sql;
 	}
 
 	/**
