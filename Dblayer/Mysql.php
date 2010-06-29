@@ -370,9 +370,10 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	 * 
 	 * @param mixed $where 
 	 *				$where = array('and' => 
-	 * 									array('id' => 1, 'gameid' => array('a', 'b'), 'status' => '%test'),
+	 * 									array('id' => 1, 'gameid' => array('a', 'b'), 'status' => '%test', 'num' => 1),
 	 *								'or' =>
 	 * 									array('id' => 1, 'gameid' => array('a', 'b'), 'status' => '%test'),
+	 *								'oper' => array('num' => '>=', 'status' => 'like')
 	 *							   ); 
 	 * @access public
 	 * @return string
@@ -381,6 +382,10 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	{
 		unset($this->sqlWhere);
 		$wh = '';
+		$operKey = array();
+		if($where['oper'])
+			$operKey = array_keys($where['oper']);
+
 		if($where['and'])
 		{
 			foreach($where['and'] as $k => $w)
@@ -390,7 +395,9 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 				else
 				{
 					$s = '=';
-					if(substr($w, 0, 1) == '%' || substr($w, -1, 1) == '%') $s = 'like ';
+					if(in_array($k, $operKey))
+						$s =  ' ' .$where['oper'][$k] . ' ';
+
 					$wh .= $and . $k . $s . '\'' . $w . '\'';
 				}
 
@@ -408,7 +415,9 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 				else
 				{
 					$s = '=';
-					if(substr($w, 0, 1) == '%' || substr($w, -1, 1) == '%') $s = 'like ';
+					if(in_array($k, $operKey))
+						$s =  ' ' .$where['oper'][$k] . ' ';
+
 					$wh .= $or . $k . $s . '\'' . $w . '\'';
 				}
 
