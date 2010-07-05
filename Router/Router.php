@@ -106,7 +106,7 @@ class N8_Router_Router
 
 		$_GET ? $this->r['get'] = $_GET : '';
 		$_POST ? $this->r['post'] = $_POST : '';
-		$_COOKIE ? $this->r['COOKIE'] = $_COOKIE : '';
+		$_COOKIE ? $this->r['cookie'] = $_COOKIE : '';
 	}
 
 	/**
