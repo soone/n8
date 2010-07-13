@@ -497,6 +497,41 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	}
 
 	/**
+	 * 调用存储过程 
+	 * 
+	 * @param mixed $procName 
+	 * @param mixed $params 
+	 * @access public
+	 * @return void
+	 */
+	public function callProc($procName, $params = null)
+	{
+		$cProcSql = 'CALL ' . $procName . '(%s)';
+		$pLen = count($params);
+		$bPa = $pLen > 0 ? '? ' . str_repeat(',?', $pLen-1) : '?';
+		$cProcSql = sprintf($cProcSql, $bPa);
+		$sth = $this->dsLink[$this->dsLinkName]->prepare($cProcSql);
+		if($pLen > 0)
+		{
+			for($i = 0; $i < $pLen; $i++)
+			{
+				if($i+1 == $pLen)
+				{
+					$return = $params[$i];
+					$sth->bindParam(i+1, $return, PDO::PARAM_STR|PDO::PARAM_INPUT_OUTPUT, 4000);
+				}
+				else
+					$sth->bindParam(i+1, $params[$i]);
+			}
+		}
+		else
+			$sth->bindParam(1, $return, PDO::PARAM_STR|PDO::PARAM_INPUT_OUTPUT, 4000);
+
+		$sth->execute();
+		return $return;
+	}
+
+	/**
 	 * 设置order格式 
 	 * 
 	 * @param mixed $order 

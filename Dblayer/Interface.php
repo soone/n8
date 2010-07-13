@@ -11,4 +11,6 @@ interface N8_Dblayer_Interface
 	public function get($option);
 	public function set($option);
 	public function del($option);
+	public function getError();
+	public function getErrno();
 }

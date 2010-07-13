@@ -130,4 +130,9 @@ class N8_Dblayer_Dblayer implements N8_Dblayer_Interface
 	{
 		return self::$ds[$this->dsFlag]->getError();
 	}
+
+	public function callProc($procName, $params = NULL)
+	{
+		return self::$ds[$this->dsFlag]->callProc($procName, $params);
+	}
 }
