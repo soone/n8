@@ -508,27 +508,27 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	{
 		$cProcSql = 'CALL ' . $procName . '(%s)';
 		$pLen = count($params);
-		$bPa = $pLen > 0 ? '? ' . str_repeat(',?', $pLen-1) : '?';
+		$bPa = $pLen > 0 ? '?' . str_repeat(',?', $pLen-1) . ',@return' : '@return';
 		$cProcSql = sprintf($cProcSql, $bPa);
 		$sth = $this->dsLink[$this->dsLinkName]->prepare($cProcSql);
 		if($pLen > 0)
 		{
 			for($i = 0; $i < $pLen; $i++)
 			{
-				if($i+1 == $pLen)
-				{
-					$return = $params[$i];
-					$sth->bindParam(i+1, $return, PDO::PARAM_STR|PDO::PARAM_INPUT_OUTPUT, 4000);
-				}
-				else
-					$sth->bindParam(i+1, $params[$i]);
+				$sth->bindParam($i+1, $params[$i]);
+
 			}
 		}
-		else
-			$sth->bindParam(1, $return, PDO::PARAM_STR|PDO::PARAM_INPUT_OUTPUT, 4000);
 
-		$sth->execute();
-		return $return;
+		if($sth->execute())
+		{
+			$sth = $this->dsLink[$this->dsLinkName]->prepare('select @return');
+			$sth->execute();
+			$r = $sth->fetch(PDO::FETCH_NUM);
+			return $r[0];
+		}
+		else
+			return false;
 	}
 
 	/**
