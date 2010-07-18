@@ -540,6 +540,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	 */
 	public function setOrder($order)
 	{
+		unset($this->sqlOrder);
 		$odby = '';
 		if($order['asc'])
 		{
