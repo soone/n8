@@ -288,7 +288,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 				$this->setWhere($option['where']);
 				$this->setLimit($option['limit']);
 				$this->setOrder($option['order']);
-				$this->sql = 'SELECT ' . $this->sqlKey . ' FROM ' . $this->table . $this->sqlGroup . $this->sqlWhere . $this->sqlOrder . $this->sqlLimit;
+				$this->sql = 'SELECT ' . $this->sqlKey . ' FROM ' . $this->table . $this->sqlWhere . $this->sqlGroup . $this->sqlOrder . $this->sqlLimit;
 				break;
 
 			case 3://set
@@ -392,7 +392,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 			foreach($where['and'] as $k => $w)
 			{
 				if(is_array($w))
-					$wh .= $and . $k . ' IN(\'' . implode('","', $w) . '\')';
+					$wh .= $and . $k . ' IN(\'' . implode('\',\'', $w) . '\')';
 				else
 				{
 					$s = '=';
@@ -462,7 +462,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 		if(!$group) return;
 		
 		$this->sqlGroup = ' GROUP BY ' . $group['by'];
-		$group['having'] ? $this->sqlGroup .= setHaving($group['having']);
+		$group['having'] ? $this->sqlGroup .= setHaving($group['having']) : '';
 	}
 
 	/**
@@ -490,7 +490,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 			foreach($having['and'] as $k => $w)
 			{
 				if(is_array($w))
-					$ha .= $and . $k . ' IN(\'' . implode('","', $w) . '\')';
+					$ha .= $and . $k . ' IN(\'' . implode('\',\'', $w) . '\')';
 				else
 				{
 					$s = '=';
@@ -642,7 +642,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	 */
 	protected function builtInStr()
 	{
-		$part = '/(\'\{\{(.*?)\}\}\')/i';
+		$part = '/(\'?\{\{(.*?)\}\}\'?)/i';
 		if(preg_match_all($part, $this->sql, $m))
 			$this->sql = str_replace($m[1], $m[2], $this->sql);
 
