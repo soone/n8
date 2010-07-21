@@ -284,10 +284,11 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 
 			case 2://get
 				$this->setKey($option['key']);
+				$this->setGroup($option['group']);
 				$this->setWhere($option['where']);
 				$this->setLimit($option['limit']);
 				$this->setOrder($option['order']);
-				$this->sql = 'SELECT ' . $this->sqlKey . ' FROM ' . $this->table . $this->sqlWhere . $this->sqlOrder . $this->sqlLimit;
+				$this->sql = 'SELECT ' . $this->sqlKey . ' FROM ' . $this->table . $this->sqlGroup . $this->sqlWhere . $this->sqlOrder . $this->sqlLimit;
 				break;
 
 			case 3://set
@@ -461,6 +462,72 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 		if(!$group) return;
 		
 		$this->sqlGroup = ' GROUP BY ' . $group['by'];
+		$group['having'] ? $this->sqlGroup .= setHaving($group['having']);
+	}
+
+	/**
+	 * setHaving
+	 * 
+	 * @param mixed $having 
+	 *				$having = array('and' => 
+	 * 									array('id' => 1, 'gameid' => array('a', 'b'), 'status' => '%test', 'num' => 1),
+	 *								'or' =>
+	 * 									array('id' => 1, 'gameid' => array('a', 'b'), 'status' => '%test'),
+	 *								'oper' => array('num' => '>=', 'status' => 'like')
+	 *							   ); 
+	 * @access public
+	 * @return string
+	 */
+	public function setHaving($having)
+	{
+		$ha = '';
+		$operKey = array();
+		if($having['oper'])
+			$operKey = array_keys($having['oper']);
+
+		if($having['and'])
+		{
+			foreach($having['and'] as $k => $w)
+			{
+				if(is_array($w))
+					$ha .= $and . $k . ' IN(\'' . implode('","', $w) . '\')';
+				else
+				{
+					$s = '=';
+					if(in_array($k, $operKey))
+						$s =  ' ' .$having['oper'][$k] . ' ';
+
+					$ha .= $and . $k . $s . '\'' . $w . '\'';
+				}
+
+				$and = ' AND ';
+			}
+		}
+
+		if($having['or'])
+		{
+			if($ha) $or = ' OR ';
+			foreach($having['or'] as $k => $w)
+			{
+				if(is_array($w))
+					$ha .= $or . $k . ' IN(\'' . implode('\',', $w) . '\')';
+				else
+				{
+					$s = '=';
+					if(in_array($k, $operKey))
+						$s =  ' ' .$having['oper'][$k] . ' ';
+
+					$ha .= $or . $k . $s . '\'' . $w . '\'';
+				}
+
+				$or = ' OR ';
+			}
+		}
+
+		if($having)
+			$ret = ' HAVING ' . $ha;
+
+		return $ret;
 	}
 
 	/**
