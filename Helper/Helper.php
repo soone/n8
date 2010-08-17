@@ -20,7 +20,8 @@ class N8_Helper_Helper
 	{
 		$js .= '<script language="javascript" type="text/javascript">';
 		$msg ? $js .= 'alert("' . $msg . '");' : '';
-		$js .= $goUrl ? 'location.href="' . $goUrl . '";' : 'history.go(-1);';
+		if(!$goUrl) $goUrl = $_SERVER['HTTP_REFERER'];
+		$js .= 'location.href="' . $goUrl . '";';
 		$js .= '</script>';
 
 		echo $js;

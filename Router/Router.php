@@ -67,46 +67,26 @@ class N8_Router_Router
 		{
 			case 1:
 			default:
-				$this->commonParse();
+				$routerType = 'N8_Router_CommonRouter';
 				break;
 
 			case 2:
-				$this->regexParse();
+				$routerType = 'N8_Router_RegexRouter';
 				break;
 
 			case 3:
-				$this->pathinfoParse();
+				$routerType = 'N8_Router_PathinfoRouter';
 				break;
 		}
-	}
 
-	/**
-	 * 传统路由解析
-	 * 
-	 * @access public
-	 * @return void
-	 */
-	public function commonParse()
-	{
-		$c = ucfirst(trim($_REQUEST['control']));
-		$a = lcfirst(trim($_REQUEST['action']));
-		if(!$c && $defControl = $this->conf->get('router->defControl'))
-			$c = ucfirst($defControl);
-
-		if(!$a && $defAction = $this->conf->get('router->defAction'))
-			$a = lcfirst($defAction);
-
-		$this->c = self::PRO_CON_DIR . '_' . $c;
-		$this->a = $a;
-		//根据路由规则返回所有的请求参数，包括get, post, cookie 
-		//todo put delete
-		$this->r = array(
-			'__N8ENV__' => array($c, $a),
-		);
-
-		$_GET ? $this->r['get'] = $_GET : '';
-		$_POST ? $this->r['post'] = $_POST : '';
-		$_COOKIE ? $this->r['cookie'] = $_COOKIE : '';
+		$parse = new $routerType();
+		$parse->parse();
+		$this->c = self::PRO_CON_DIR . '_' . $parse->getControl();
+		$this->a = $parse->getAction();
+		$this->r = array('__N8ENV__' => array($c, $a));
+		$this->r['get'] = $parse->getGet();
+		$this->r['post'] = $parse->getPost();
+		$this->r['cookie'] = $parse->getCookie();
 	}
 
 	/**
