@@ -4,6 +4,7 @@
  *
  * @author soone(fengyue15#163.com)
  */
+require_once N8_ROOT . './Dblayer/Interface.php';
 class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 {
 	/**
