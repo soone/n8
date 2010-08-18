@@ -15,11 +15,10 @@ class N8_Exception extends Exception
 	 */
 	public function n8catch()
 	{
-		$msg[] = 'Error Line:' . $this->line;
 		$msg[] = 'Error Message:' . $this->message;
 		$msg[] = 'Error Code:' . $this->code;
 		$msg[] = 'Trace:' . $this->getTraceAsString();
-		var_export($msg);
+		echo implode('<br />', $msg);
 		exit;
 	}
 }

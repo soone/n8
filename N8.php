@@ -14,7 +14,7 @@ final class N8
 
 	public function __construct()
 	{
-		spl_autoload_register(array('N8', '__autoload'));
+		spl_autoload_register(array(__CLASS__, '__autoload'));
 	}
 	/**
 	 * __autoload 
@@ -25,17 +25,18 @@ final class N8
 	 */
 	public static function __autoload($cName)
 	{
+		if(class_exists($cName, false))
+			return;
+
+		$className = ltrim($cName, '\\');
 		$splFuncs = count(spl_autoload_functions());
-        $classPath = str_replace('_', '/', $cName . '.php');
-        if(file_exists($fullPath = PROJECT_ROOT . $classPath) || file_exists($fullPath = N8_ROOT . substr($classPath, 3)))
-        {
-        	require_once $fullPath;
-        }
-        elseif($splFuncs == 1)
-        {
-        	eval("class $cName{}");
+        $classPath = str_replace('_', DIRECTORY_SEPARATOR, $className . '.php');
+        if(!file_exists($fullPath = PROJECT_ROOT . $classPath) && !file_exists($fullPath = N8_ROOT . substr($classPath, 3)) && $splFuncs == 1)
         	throw new N8_Exception('The class ' . $cName . ' not exists', 280);
-        }
+
+        require $fullPath;
+        if(!class_exists($cName, false) && !interface_exists($cName, false) && $splFuncs == 1)
+        	throw new N8_Exception('The class ' . $cName . ' not exists', 290);
 	}
 
 	/**
@@ -65,7 +66,7 @@ final class N8
 		try
 		{
 			require_once N8_ROOT . './Config.php';
-			$this->conf = new N8_Config();
+			$this->conf = new N8_Config(PROJECT_ROOT . DIRECTORY_SEPARATOR . PROJECT_NAME . '.php');
 		}
 		catch(N8_Exception $e)
 		{
@@ -86,16 +87,14 @@ final class N8
 		try
 		{
 			//路由解析
-			require_once N8_ROOT . './Router/Router.php';
+			require N8_ROOT . './Router/Router.php';
 			$router = new N8_Router_Router($this->conf);
 			$router->parse();
 
-			require_once N8_ROOT . './Core/Control.php';
-			require_once N8_ROOT . './Core/Model.php';
 			$control = $router->getControl();
 			$action = $router->getAction();
 			$c = new $control($this->conf, $router->getRequest());
-			$c->$action();
+			call_user_func(array($c, $action));
 		}
 		catch(N8_Exception $e)
 		{

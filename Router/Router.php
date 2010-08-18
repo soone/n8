@@ -67,20 +67,23 @@ class N8_Router_Router
 		{
 			case 1:
 			default:
-				$routerType = 'N8_Router_CommonRouter';
+				$routerType = 'N8_Router_CommonParse';
+				require N8_ROOT . './Router/CommonParse.php';
 				break;
 
 			case 2:
-				$routerType = 'N8_Router_RegexRouter';
+				$routerType = 'N8_Router_RegexParse';
+				require N8_ROOT . './Router/RegexParse.php';
 				break;
 
 			case 3:
-				$routerType = 'N8_Router_PathinfoRouter';
+				$routerType = 'N8_Router_PathinfoParse';
+				require N8_ROOT . './Router/PathinfoParse.php';
 				break;
 		}
 
 		$parse = new $routerType();
-		$parse->parse();
+		$parse->parse($this->conf);
 		$this->c = self::PRO_CON_DIR . '_' . $parse->getControl();
 		$this->a = $parse->getAction();
 		$this->r = array('__N8ENV__' => array($c, $a));

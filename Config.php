@@ -23,30 +23,15 @@ class N8_Config
 	 * @access public
 	 * @return void
 	 */
-	public function __construct()
+	public function __construct($config)
 	{
-		//if(RELEASE)
-		//{
-			if(!is_file(PROJECT_CONFIG . '/' . PROJECT_NAME . '_mini.php'))
-			{
-				$cFile = PROJECT_CONFIG . '/' . PROJECT_NAME . '.php';
-				if(is_file($cFile))
-				{
-					require_once $cFile;
-					$this->pConfVariable = $pConfig;
-				}
-				else
-					throw new N8_Exception('The config file of project is not exists', 3404);
-			}
-			else
-			{
-				//todo 使用缓存读取
-			}
-	//	}
-	//	else
-	//	{
-	//		//使用yaml直接读取
-	//	}
+		if(file_exists($config))
+		{
+			require $config;
+			$this->pConfVariable = $pConfig;
+		}
+		else
+			throw new N8_Exception('The config file of project is not exists', 3404);
 	}
 
 	/**
@@ -65,12 +50,18 @@ class N8_Config
 			$gCount = count($gNames);
 			for($i = 1; $i < $gCount; $i++)
 			{
+				if(!array_key_exists($gNames[$i], $rValue))
+				{
+					$rValue = 0;
+					break;
+				}
+
 				$rValue = $rValue[$gNames[$i]];
 			}
 		}
 		else
 		{
-			$rValue = $this->pConfVariable[$getName];
+			array_key_exists($getName, $this->pConfVariable) ? $rValue = $this->pConfVariable[$getName] : '';
 		}
 
 		return $rValue;

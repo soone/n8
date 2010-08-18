@@ -1,11 +1,11 @@
 <?php
 /**
- * 正则解析路由器程序文件
+ * 一般规则解析路由器程序文件
  *
  * @author soone(fengyue15#163.com)
  */
 require N8_ROOT . './Router/Interface.php';
-class N8_Router_RegexParse implements N8_Router_Interface
+class N8_Router_CommonParse implements N8_Router_Interface
 {
 	/**
 	 * 解析出来的控制器名称 
@@ -48,39 +48,13 @@ class N8_Router_RegexParse implements N8_Router_Interface
 	public function parse($conf)
 	{
 		$this->conf = $conf;
-		$rUri = $_SERVER['REQUEST_URI'];
-		$rUriArr = explode('/', $rUri);
-		$cLen = $aLen = 0;
-		$rUriArr[1] = ucfirst($rUriArr[1]);
-		if($rUriArr[1] && $this->conf->get('router->' . $rUriArr[1]))
-		{
-			$this->c = $rUriArr[1];
-			$cLen = strlen($this->c);
-		}
-		else
-			$this->c = ucfirst($this->conf->get('router->defControl'));
-		
-		$acs = $this->conf->get('router->' . $this->c . '->acs');
-		if($acs && $rUriArr[2] && in_array($rUriArr[2], $acs))
-		{
-			$this->a = lcfirst($rUriArr[2]);
-			$aLen = strlen($this->a);
-		}
-		else
-			$this->a = lcfirst($this->conf->get('router->defAction'));
-		
-		if($regRule = $this->conf->get('router->' . $this->c . '->' . $this->a . '->regex'))
-		{
-			$getPars = substr($rUri, $cLen+$aLen);
-			if(preg_match($regRule, $getPars, $matchs))
-			{
-				$keys = $this->conf->get('router->' . $this->c . '->' . $this->a . '->keys') ;
-				for($i=0,$c=count($keys); $i < $c; $i++)
-				{
-					$this->get[$keys[$i]] = $matchs[$i+1];
-				}
-			}
-		}
+		$this->c = ucfirst(trim($_REQUEST['control']));
+		$this->a = lcfirst(trim($_REQUEST['action']));
+		if(!$this->c && $defControl = $this->conf->get('router->defControl'))
+			$this->c = ucfirst($defControl);
+
+		if(!$this->a && $defAction = $this->conf->get('router->defAction'))
+			$this->a = lcfirst($defAction);
 	}
 
 	/**
@@ -113,7 +87,7 @@ class N8_Router_RegexParse implements N8_Router_Interface
 	 */
 	public function getGet()
 	{
-		return $this->get;
+		return $_GET;
 	}
 
 	/**

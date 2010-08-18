@@ -84,6 +84,12 @@ class N8_Core_Control
 	 */
 	public function __call($method, $args)
 	{
+		if(!RELEASE)
+		{
+			throw new N8_Exception('The Method ' . $method . ' is not exists', 310);
+			return;
+		}
+
 		//记录日志
 
 		//跳转到错误页面
