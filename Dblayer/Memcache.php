@@ -91,10 +91,10 @@ class N8_Dblayer_Memcache extends N8_Dblayer_Keyvalue implements N8_Dblayer_Inte
 	 */
 	public function create($option)
 	{
-		if(!$option['key'] || !$option['value'])
+		if(!isset($option['key']) || !isset($option['value']) || !$option['key'] || !$option['value'])
 			throw new N8_Dblayer_Exception(self::INVALID_VAR_MES, self::INVALID_VAR_CODE);
 
-		return $this->dsObj->set($option['key'], $option['value'], $option['flag'], $option['exp']);
+		return $this->dsObj->set($option['key'], $option['value'], 0, (isset($option['exp']) ? (int)$option['exp'] : 0));
 	}
 
 	/**
@@ -109,17 +109,7 @@ class N8_Dblayer_Memcache extends N8_Dblayer_Keyvalue implements N8_Dblayer_Inte
 		if(!$key)
 			throw new N8_Dblayer_Exception(INVALID_VAR_MES, INVALID_VAR_CODE);
 
-		if(is_array($key))
-		{
-			for($i = 0, $c = count($key); $i < $c; $i++)
-			{
-				$rValue[$key[$i]] =  $this->dsObj->get($key[$i]);
-			}
-		}
-		else
-			$rValue = $this->dsObj->get($key);
-
-		return $rValue;
+		return $rValue = $this->dsObj->get($key);
 	}
 
 	/**
@@ -143,10 +133,10 @@ class N8_Dblayer_Memcache extends N8_Dblayer_Keyvalue implements N8_Dblayer_Inte
 	 */
 	public function del($option)
 	{
-		if(!$option['key'])
+		if(!isset($option['key']) || !$option['key'])
 			throw new N8_Dblayer_Exception(INVALID_VAR_MES, INVALID_VAR_CODE);
 
-		return $this->dsObj->delete($option['key'], $option['exp']);
+		return $this->dsObj->delete($option['key'], (isset($option['exp']) ? (int)$option['exp'] : 0));
 	}
 
 	/**
@@ -180,13 +170,13 @@ class N8_Dblayer_Memcache extends N8_Dblayer_Keyvalue implements N8_Dblayer_Inte
 	 */
 	public function increment($option)
 	{
-		if(!$option['key'])
+		if(!$option['key'] || !isset($option['key']))
 			throw new N8_Dblayer_Exception(INVALID_VAR_MES, INVALID_VAR_CODE);
 
 		if(!$this->get($option['key']))
 			$this->set(array('key' => $option['key'], 0));
 
-		return $this->dsObj->increment($option['key'], ($option['value'] ? $option['value'] : 1));
+		return $this->dsObj->increment($option['key'], ( isset($option['value']) && $option['value'] ? $option['value'] : 1));
 	}
 
 	/**
@@ -198,9 +188,9 @@ class N8_Dblayer_Memcache extends N8_Dblayer_Keyvalue implements N8_Dblayer_Inte
 	 */
 	public function decrement($option)
 	{
-		if(!$option['key'])
+		if(!$option['key'] || !isset($option['key']))
 			throw new N8_Dblayer_Exception(INVALID_VAR_MES, INVALID_VAR_CODE);
 
-		return $this->dsObj->decrement($option['key'], ($option['value'] ? $option['value'] : 1));
+		return $this->dsObj->decrement($option['key'], (isset($option['value']) && $option['value'] ? $option['value'] : 1));
 	}
 }

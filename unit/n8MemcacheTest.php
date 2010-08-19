@@ -50,4 +50,47 @@ class n8MemcacheTest extends PHPUnit_Framework_TestCase
 	{
 		$this->assertEquals(false, $this->obj->xxx());
 	}
+
+	/**
+	 * testCreate 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function testCreateAndGetAndSetAndDel()
+	{
+		$this->obj->setConnect(array('dbHost' => '127.0.0.1', 'dbPort' => '11211'));
+		$this->assertEquals(true, $this->obj->create(array('key' => 'a1', 'value' => 1, 'exp' => 3600, 'flag' => 1)));
+		$this->assertEquals(true, $this->obj->create(array('key' => 'a2', 'value' => 2)));
+		$this->assertEquals(true, $this->obj->create(array('key' => 'a3', 'value' => 3, 'exp' => 3600)));
+
+		$this->assertEquals(1, $this->obj->get('a1'));
+		$this->assertEquals(2, $this->obj->get('a2'));
+		$this->assertEquals(3, $this->obj->get('a3'));
+
+		$this->assertEquals(true, $this->obj->set(array('key' => 'a1', 'value' => 3, 'exp' => 3600, 'flag' => 1)));
+		$this->assertEquals(true, $this->obj->set(array('key' => 'a2', 'value' => 4)));
+		$this->assertEquals(true, $this->obj->set(array('key' => 'a3', 'value' => 2, 'exp' => 3600)));
+		
+		$this->assertEquals(3, $this->obj->get('a1'));
+		$this->assertEquals(4, $this->obj->get('a2'));
+		$this->assertEquals(2, $this->obj->get('a3'));
+
+		$this->assertEquals(true, $this->obj->del(array('key' => 'a1', 'exp' => 360)));
+		$this->assertEquals(true, $this->obj->del(array('key' => 'a2')));
+		$this->assertEquals(true, $this->obj->del(array('key' => 'a3')));
+		
+		$this->assertEquals(false, $this->obj->get('a1'));
+		$this->assertEquals(false, $this->obj->get('a2'));
+		$this->assertEquals(false, $this->obj->get('a3'));
+	}
+
+	public function testIncrement()
+	{
+		$this->obj->setConnect(array('dbHost' => '127.0.0.1', 'dbPort' => '11211'));
+		$this->assertEquals(true, $this->obj->increment(array('key' => 'a')));
+		$this->assertEquals(1, $this->obj->get('a'));
+		$this->assertEquals(true, $this->obj->increment(array('key' => 'a', 'value' => 3)));
+		$this->assertEquals(4, $this->obj->get('a'));
+	}
 }
