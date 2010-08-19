@@ -6,6 +6,8 @@
  */
 abstract class N8_Dblayer_Keyvalue
 {
+	static $obj;
+
 	/**
 	 * 自增加1操作 
 	 * 
@@ -13,7 +15,7 @@ abstract class N8_Dblayer_Keyvalue
 	 * @access public
 	 * @return void
 	 */
-	abstract function increment();
+	abstract function increment($option);
 
 	/**
 	 * 自减1操作 
@@ -22,7 +24,7 @@ abstract class N8_Dblayer_Keyvalue
 	 * @access public
 	 * @return void
 	 */
-	abstract function decrement();
+	abstract function decrement($option);
 
 	/**
 	 * 清除缓存数据 
@@ -57,4 +59,20 @@ abstract class N8_Dblayer_Keyvalue
 	 * @return void
 	 */
 	public function getError(){}
+
+	/**
+	 * __call 
+	 * 
+	 * @param mixed $method 
+	 * @param mixed $val 
+	 * @access protected
+	 * @return void
+	 */
+	public function __call($method, $val)
+	{
+		if(method_exists($this->dsObj, $method))
+			return call_user_func_array(array($this->dsObj, $method), (array)$val);
+		else
+			return false;
+	}
 }

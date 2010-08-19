@@ -49,6 +49,13 @@ class N8_Router_RegexParse implements N8_Router_Interface
 	{
 		$this->conf = $conf;
 		$rUri = $_SERVER['REQUEST_URI'];
+		if($rUri == '/')
+		{
+			$this->c = ucfirst($this->conf->get('router->defControl'));
+			$this->a = lcfirst($this->conf->get('router->defAction'));
+			return;
+		}
+
 		$rUriArr = explode('/', $rUri);
 		$cLen = $aLen = 0;
 		$rUriArr[1] = ucfirst($rUriArr[1]);
