@@ -4,6 +4,7 @@
  *
  * @author soone(fengyue15#163.com)
  */
+require_once N8_ROOT . './Exception.php';
 class N8_Core_Control
 {
 	public $conf;
@@ -54,9 +55,14 @@ class N8_Core_Control
 	{
 		if(!is_object($this->view))
 		{
+			if(!$vExt = $this->conf->get('view->extend'))
+			{
+				require_once N8_ROOT . './Core/View.php';
+				$vExt = 'N8_Core_View';
+			}
+
+			$cView = new $vExt();
 			//创建视图实例
-			require_once N8_ROOT . './Core/View.php';
-			$cView = new N8_Core_View();
 			$this->view = $cView->createView($this->conf->get('view'));
 		}
 
@@ -84,6 +90,9 @@ class N8_Core_Control
 	 */
 	public function __call($method, $args)
 	{
+		if(method_exists($this->view, $method))
+			return call_user_func_array(array($this->view, $method), $args);
+
 		if(!RELEASE)
 		{
 			throw new N8_Exception('The Method ' . $method . ' is not exists', 310);

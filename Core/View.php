@@ -19,7 +19,7 @@ class N8_Core_View
 
 	public function createView($conf)
 	{
-		if(!in_array($conf['type'], array('Smarty', 'Discuz')))
+		if(!in_array($conf['type'], array('Smarty', 'Discuz', 'Blitz')))
 			throw new N8_View_Exception('Invalid Template Engine', 214);
 
 		include_once N8_ROOT . './View/' . $conf['type'] . 'Apa.php';
