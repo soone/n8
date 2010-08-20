@@ -8,6 +8,10 @@ abstract class N8_Dblayer_Keyvalue
 {
 	static $obj;
 
+	protected $errorCode;
+
+	protected $errorInfo;
+
 	/**
 	 * 自增加1操作 
 	 * 
@@ -50,7 +54,10 @@ abstract class N8_Dblayer_Keyvalue
 	 * @access public
 	 * @return void
 	 */
-	public function getErrno(){}
+	public function getErrno()
+	{
+		return $this->errorCode;
+	}
 
 	/**
 	 * 返回当前错误信息 
@@ -58,7 +65,10 @@ abstract class N8_Dblayer_Keyvalue
 	 * @access public
 	 * @return void
 	 */
-	public function getError(){}
+	public function getError()
+	{
+		return $this->errorInfo;
+	}
 
 	/**
 	 * __call 
@@ -74,5 +84,16 @@ abstract class N8_Dblayer_Keyvalue
 			return call_user_func_array(array($this->dsObj, $method), (array)$val);
 		else
 			return false;
+	}
+
+	/**
+	 * 析构函数 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function __destruct()
+	{
+		$this->close();
 	}
 }

@@ -6,10 +6,11 @@
  */
 require_once N8_ROOT . './Dblayer/Interface.php';
 require_once N8_ROOT . './Dblayer/Keyvalue.php';
+require_once N8_ROOT . './Dblayer/Exception.php';
 class N8_Dblayer_Memcache extends N8_Dblayer_Keyvalue implements N8_Dblayer_Interface
 {
 	CONST INVALID_VAR_MES = 'Invalid Argument';
-	CONST INVALID_VAR_CODE = '80000';
+	CONST INVALID_VAR_CODE = 80000;
 
 	/**
 	 * 数据库类型
@@ -75,11 +76,20 @@ class N8_Dblayer_Memcache extends N8_Dblayer_Keyvalue implements N8_Dblayer_Inte
 		$this->dsPort = $dsConnect['dbPort'];
 		if(is_array($this->dsHost))
 		{
+			$r = 0;
 			for($i = 0, $c = count($this->dsHost); $i < $c; $i++)
-				$this->dsObj->addServer($this->dsHost[$i], $this->dsPort[$i]);
+			{
+				if(!$this->dsObj->addServer($this->dsHost[$i], $this->dsPort[$i]))
+					$r++;
+			}
+
+			if($r < $c)
+				return true;
+			else
+				return false;
 		}
 		else
-			$this->dsObj->connect($this->dsHost, $this->dsPort);
+			return $this->dsObj->connect($this->dsHost, $this->dsPort);
 	}
 
 	/**
@@ -91,7 +101,7 @@ class N8_Dblayer_Memcache extends N8_Dblayer_Keyvalue implements N8_Dblayer_Inte
 	 */
 	public function create($option)
 	{
-		if(!isset($option['key']) || !isset($option['value']) || !$option['key'] || !$option['value'])
+		if(!isset($option['key']) || !isset($option['value']) || !$option['key'])
 			throw new N8_Dblayer_Exception(self::INVALID_VAR_MES, self::INVALID_VAR_CODE);
 
 		return $this->dsObj->set($option['key'], $option['value'], 0, (isset($option['exp']) ? (int)$option['exp'] : 0));
@@ -109,7 +119,7 @@ class N8_Dblayer_Memcache extends N8_Dblayer_Keyvalue implements N8_Dblayer_Inte
 		if(!$key)
 			throw new N8_Dblayer_Exception(INVALID_VAR_MES, INVALID_VAR_CODE);
 
-		return $rValue = $this->dsObj->get($key);
+		return $this->dsObj->get($key);
 	}
 
 	/**
@@ -174,7 +184,7 @@ class N8_Dblayer_Memcache extends N8_Dblayer_Keyvalue implements N8_Dblayer_Inte
 			throw new N8_Dblayer_Exception(INVALID_VAR_MES, INVALID_VAR_CODE);
 
 		if(!$this->get($option['key']))
-			$this->set(array('key' => $option['key'], 0));
+			$this->set(array('key' => $option['key'], 'value' => 0));
 
 		return $this->dsObj->increment($option['key'], ( isset($option['value']) && $option['value'] ? $option['value'] : 1));
 	}
@@ -192,5 +202,16 @@ class N8_Dblayer_Memcache extends N8_Dblayer_Keyvalue implements N8_Dblayer_Inte
 			throw new N8_Dblayer_Exception(INVALID_VAR_MES, INVALID_VAR_CODE);
 
 		return $this->dsObj->decrement($option['key'], (isset($option['value']) && $option['value'] ? $option['value'] : 1));
+	}
+
+	/**
+	 * 关闭缓存链接 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function close()
+	{
+		return $this->dsObj->close();
 	}
 }

@@ -37,13 +37,10 @@ class n8MemcacheTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testSetConnect()
 	{
-		$this->obj->setConnect(array('dbHost' => '127.0.0.1', 'dbPort' => '11211'));
-		$this->assertGreaterThan(0, (int)$this->obj->getServerStatus('127.0.0.1', '11211'));
+		$this->assertEquals(true, $this->obj->setConnect(array('dbHost' => '127.0.0.1', 'dbPort' => '11211')));
+		$this->assertEquals(true, $this->obj->setConnect(array('dbHost' => array('127.0.0.1'), 'dbPort' => '11212')));
 		$this->obj->close();
-		$this->obj->setConnect(array('dbHost' => array('127.0.0.1', '127.0.0.1', '127.0.0.1'), 'dbPort' => array(11211, 11212, 11213)));
-		$this->assertGreaterThan(0, (int)$this->obj->getServerStatus('127.0.0.1', '11211'));
-		$this->assertGreaterThan(0, (int)$this->obj->getServerStatus('127.0.0.1', '11212'));
-		$this->assertGreaterThan(0, (int)$this->obj->getServerStatus('127.0.0.1', '11213'));
+		$this->assertEquals(true, $this->obj->setConnect(array('dbHost' => array('127.0.0.1', '127.0.0.1', '127.0.0.1'), 'dbPort' => array(11211, 11212, 11213))));
 	}
 
 	public function test__call()
@@ -88,9 +85,14 @@ class n8MemcacheTest extends PHPUnit_Framework_TestCase
 	public function testIncrement()
 	{
 		$this->obj->setConnect(array('dbHost' => '127.0.0.1', 'dbPort' => '11211'));
-		$this->assertEquals(true, $this->obj->increment(array('key' => 'a')));
-		$this->assertEquals(1, $this->obj->get('a'));
-		$this->assertEquals(true, $this->obj->increment(array('key' => 'a', 'value' => 3)));
-		$this->assertEquals(4, $this->obj->get('a'));
+		$this->assertEquals($this->obj->get('a')+1, $this->obj->increment(array('key' => 'a')));
+		$this->assertEquals($this->obj->get('a')+3, $this->obj->increment(array('key' => 'a', 'value' => 3)));
+	}
+
+	public function testDecrement()
+	{
+		$this->obj->setConnect(array('dbHost' => '127.0.0.1', 'dbPort' => '11211'));
+		$this->assertEquals($this->obj->get('a')-1, $this->obj->decrement(array('key' => 'a')));
+		$this->assertEquals($this->obj->get('a')-3, $this->obj->decrement(array('key' => 'a', 'value' => 3)));
 	}
 }

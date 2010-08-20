@@ -5,6 +5,7 @@
  * @author soone(fengyue15#163.com)
  */
 require_once N8_ROOT . './Dblayer/Interface.php';
+require_once N8_ROOT . './Dblayer/Exception.php';
 class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 {
 	/**
@@ -98,9 +99,9 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 
 	public $sqlGroup;
 
-	public $errorCode;
+	protected $errorCode;
 
-	public $errorInfo;
+	protected $errorInfo;
 
 	public $lastInsertId;
 
@@ -657,6 +658,17 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	 * @return void
 	 */
 	public function __destruct()
+	{
+		$this->close();
+	}
+
+	/**
+	 * 关闭数据库 
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function close()
 	{
 		foreach($this->dsLink as $link)
 		{
