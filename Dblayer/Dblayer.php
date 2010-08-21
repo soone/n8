@@ -5,8 +5,7 @@
  * @author soone(fengyue15#163.com)
  */
 require_once N8_ROOT . './Dblayer/Exception.php';
-require_once N8_ROOT . './Dblayer/Interface.php';
-class N8_Dblayer_Dblayer implements N8_Dblayer_Interface
+class N8_Dblayer_Dblayer
 {
 	/**
 	 * 预定义的数据源类型 
@@ -48,7 +47,8 @@ class N8_Dblayer_Dblayer implements N8_Dblayer_Interface
 		if(!is_object(self::$ds[$this->dsFlag]))
 			$this->factory($dsType, $dsConnect);
 		
-		return $this;
+		return self::$ds[$this->dsFlag];
+		//return $this;
 	}
 
 	/**
@@ -67,72 +67,7 @@ class N8_Dblayer_Dblayer implements N8_Dblayer_Interface
 		include_once N8_ROOT . './Dblayer/' . $dsType . '.php';
 		$dsName = 'N8_Dblayer_' . $dsType;
 		self::$ds[$this->dsFlag] = $dsName::getSingle();
-		$dsConnect ? $this->setConnect($dsConnect) : '';
+		$dsConnect && !self::$ds['link'] ? self::$ds[$this->dsFlag]->setConnect($dsConnect) : '';
 		return $this;
-	}
-
-	/**
-	 * 设置数据源参数 
-	 * 
-	 * @param mixed $dsConnect 
-	 * @access public
-	 * @return void
-	 */
-	public function setConnect($dsConnect = NULL)
-	{
-		if(!self::$ds['link'])
-			self::$ds['link'] = self::$ds[$this->dsFlag]->setConnect($dsConnect);
-
-		return $this;
-	}
-
-	public function create($option)
-	{
-		return self::$ds[$this->dsFlag]->create($option);
-	}
-
-	public function get($option)
-	{
-		return self::$ds[$this->dsFlag]->get($option);
-	}
-
-	public function set($option)
-	{
-		return self::$ds[$this->dsFlag]->set($option);
-	}
-
-	public function del($option)
-	{
-		return self::$ds[$this->dsFlag]->del($option);
-	}
-
-	public function setSql($type, $option)
-	{
-		return self::$ds[$this->dsFlag]->setSql($type, $option);
-	}
-
-	public function getSql()
-	{
-		return self::$ds[$this->dsFlag]->getSql();
-	}
-
-	public function getLastInsertId()
-	{
-		return self::$ds[$this->dsFlag]->getLastInsertId();
-	}
-
-	public function getErrno()
-	{
-		return self::$ds[$this->dsFlag]->getErrno();
-	}
-
-	public function getError()
-	{
-		return self::$ds[$this->dsFlag]->getError();
-	}
-
-	public function callProc($procName, $params = NULL)
-	{
-		return self::$ds[$this->dsFlag]->callProc($procName, $params);
 	}
 }

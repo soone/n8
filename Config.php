@@ -50,7 +50,7 @@ class N8_Config
 			$gCount = count($gNames);
 			for($i = 1; $i < $gCount; $i++)
 			{
-				if(!array_key_exists($gNames[$i], $rValue))
+				if(!array_key_exists($gNames[$i], (array)$rValue))
 				{
 					$rValue = 0;
 					break;

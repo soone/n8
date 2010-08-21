@@ -31,10 +31,11 @@ final class N8
 		$className = ltrim($cName, '\\');
 		$splFuncs = count(spl_autoload_functions());
         $classPath = str_replace('_', DIRECTORY_SEPARATOR, $className . '.php');
-        if(!file_exists($fullPath = PROJECT_ROOT . $classPath) && !file_exists($fullPath = N8_ROOT . substr($classPath, 3)) && $splFuncs == 1)
+        if(file_exists($fullPath = PROJECT_ROOT . $classPath) || file_exists($fullPath = N8_ROOT . substr($classPath, 3)) )
+			require $fullPath;
+		elseif($splFuncs == 1)
         	throw new N8_Exception('The class ' . $cName . ' not exists', 280);
 
-        require $fullPath;
         if(!class_exists($cName, false) && !interface_exists($cName, false) && $splFuncs == 1)
         	throw new N8_Exception('The class ' . $cName . ' not exists', 290);
 	}
@@ -66,7 +67,7 @@ final class N8
 		try
 		{
 			require_once N8_ROOT . './Config.php';
-			$this->conf = new N8_Config(PROJECT_ROOT . DIRECTORY_SEPARATOR . PROJECT_NAME . '.php');
+			$this->conf = new N8_Config(PROJECT_CONFIG . DIRECTORY_SEPARATOR . PROJECT_NAME . '.php');
 		}
 		catch(N8_Exception $e)
 		{

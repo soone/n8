@@ -84,9 +84,10 @@ class N8_Router_Router
 
 		$parse = new $routerType();
 		$parse->parse($this->conf);
-		$this->c = self::PRO_CON_DIR . '_' . $parse->getControl();
+		$c = $parse->getControl();
+		$this->c = self::PRO_CON_DIR . '_' . $c;
 		$this->a = $parse->getAction();
-		$this->r = array('__N8ENV__' => array($c, $a));
+		$this->r = array('__N8ENV__' => array($c, $this->a));
 		$this->r['get'] = $parse->getGet();
 		$this->r['post'] = $parse->getPost();
 		$this->r['cookie'] = $parse->getCookie();

@@ -74,6 +74,7 @@ class N8_Core_Control
 		}
 
 		!$tpl ? $tpl = $this->req['__N8ENV__'][0] . '_' . $this->req['__N8ENV__'][1] . $this->conf->get('view->suffix') : '';
+
 		if(isset($var['__N8RENDFETCH__']))
 			return $this->view->fetch($tpl);
 		else
