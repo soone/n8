@@ -40,8 +40,11 @@ class N8_Core_Control
 			return;
 		}
 
-		$req = new N8_Request_Request();
-		$this->req = $req->filterRequest($this->conf->get($r['__N8ENV__'][0] . '->req'), $r);
+		require_once N8_ROOT . './Request/Request.php';
+		$req = new N8_Request_Request($r);
+		include_once PROJECT_CONFIG . './filterConfig.php';
+		$req->setActionRule($this->conf->get('reqRule->' . $r['__N8ENV__'][0] . '->' . $r['__N8ENV__'][1]));
+		$this->req = $req->filterRequest();
 	}
 
 	/**
