@@ -42,7 +42,7 @@ class N8_Core_Control
 
 		require_once N8_ROOT . './Request/Request.php';
 		$req = new N8_Request_Request($r);
-		include_once PROJECT_CONFIG . './filterConfig.php';
+		include_once PROJECT_CONFIG . '/filterConfig.php';
 		$req->setActionRule($this->conf->get('reqRule->' . $r['__N8ENV__'][0] . '->' . $r['__N8ENV__'][1]));
 		$this->req = $req->filterRequest();
 	}

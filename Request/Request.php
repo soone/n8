@@ -45,5 +45,6 @@ class N8_Request_Request
 	{
 		if(!$this->rVal) return false;
 
+		return $this->rVal;
 	}
 }
