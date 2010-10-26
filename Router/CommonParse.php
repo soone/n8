@@ -49,12 +49,12 @@ class N8_Router_CommonParse implements N8_Router_Interface
 	{
 		$this->conf = $conf;
 		$this->c = ucfirst(trim($_REQUEST['control']));
-		$this->a = lcfirst(trim($_REQUEST['action']));
+		$this->a = (trim($_REQUEST['action']));
 		if(!$this->c && $defControl = $this->conf->get('router->defControl'))
 			$this->c = ucfirst($defControl);
 
 		if(!$this->a && $defAction = $this->conf->get('router->defAction'))
-			$this->a = lcfirst($defAction);
+			$this->a = ($defAction);
 	}
 
 	/**

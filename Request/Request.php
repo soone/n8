@@ -6,45 +6,15 @@
 require_once N8_ROOT . './Request/Exception.php';
 class N8_Request_Request 
 {
-	/**
-	 * 所有请求的环境参数和变量 
-	 * 
-	 * @var mixed
-	 * @access public
-	 */
-	public $rVal = NULL;
+	public function __construct(){}
 
-	protected $actionRule;
-
-	public function __construct($r = NULL)
+	public function filterRequest($fRule, $fArgs)
 	{
-		if($r)
-			$this->rVal = $r;
-	}
+		if(!$fRule)
+		{
+			
+		}
 
-	/**
-	 * 设置action的全局过滤规则
-	 * 
-	 * @param mixed $actionRule 
-	 * @access public
-	 * @return void
-	 */
-	public function setActionRule($actionRule = NULL)
-	{
-		if($actionRule)
-			$this->actionRule = (array)$actionRule;
-	}
-
-	/**
-	 * 执行过滤操作 
-	 * 
-	 * @access public
-	 * @return array
-	 */
-	public function filterRequest()
-	{
-		if(!$this->rVal) return false;
-
-		return $this->rVal;
+		return $fArgs;
 	}
 }

@@ -376,7 +376,7 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 	 * 									array('id' => 1, 'gameid' => array('a', 'b'), 'status' => '%test', 'num' => 1),
 	 *								'or' =>
 	 * 									array('id' => 1, 'gameid' => array('a', 'b'), 'status' => '%test'),
-	 *								'oper' => array('num' => '>=', 'status' => 'like')
+	 *								'oper' => array('num' => array('and' => array('>=', '<=')), 'status' => 'like')
 	 *							   ); 
 	 * @access public
 	 * @return string
@@ -393,8 +393,13 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 		{
 			foreach($where['and'] as $k => $w)
 			{
-				if(is_array($w))
+				if(is_array($w) && !is_array($where['oper'][$k]))
 					$wh .= $and . $k . ' IN(\'' . implode('\',\'', $w) . '\')';
+				elseif(is_array($w) && is_array($where['oper'][$k]))
+				{
+					$wh .= $and . $k . ' ' . $where['oper'][$k][0] . '\'' . $w[0] . '\'';
+					$wh .= ' AND ' . $k . ' ' . $where['oper'][$k][1] . '\'' . $w[1] . '\'';
+				}
 				else
 				{
 					$s = '=';
@@ -413,8 +418,13 @@ class N8_Dblayer_Mysql implements N8_Dblayer_Interface
 			if($wh) $or = ' OR ';
 			foreach($where['or'] as $k => $w)
 			{
-				if(is_array($w))
+				if(is_array($w) && !is_array($where['oper'][$k]))
 					$wh .= $or . $k . ' IN(\'' . implode('\',', $w) . '\')';
+				elseif(is_array($w) && is_array($where['oper'][$k]))
+				{
+					$wh .= $and . $k . ' ' . $where['oper'][$k][0] . '\'' . $w[0] . '\'';
+					$wh .= ' OR ' . $k . ' ' . $where['oper'][$k][1] . '\'' . $w[1] . '\'';
+				}
 				else
 				{
 					$s = '=';

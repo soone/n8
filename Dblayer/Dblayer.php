@@ -66,7 +66,8 @@ class N8_Dblayer_Dblayer
 
 		include_once N8_ROOT . './Dblayer/' . $dsType . '.php';
 		$dsName = 'N8_Dblayer_' . $dsType;
-		self::$ds[$this->dsFlag] = $dsName::getSingle();
+		//self::$ds[$this->dsFlag] = $dsName::getSingle();
+		self::$ds[$this->dsFlag] = N8_Dblayer_Mysql::getSingle();
 		$dsConnect && !self::$ds['link'] ? self::$ds[$this->dsFlag]->setConnect($dsConnect) : '';
 		return $this;
 	}
