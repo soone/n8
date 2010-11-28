@@ -18,6 +18,7 @@ class N8_Helper_Helper
 	 */
 	static function showMessage($msg = NULL, $goUrl = NULL)
 	{
+		header('Content-Type:text/html; charset=UTF-8');
 		$js .= '<script language="javascript" type="text/javascript">';
 		$msg ? $js .= 'alert("' . $msg . '");' : '';
 		if(!$goUrl) $goUrl = $_SERVER['HTTP_REFERER'];
